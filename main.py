@@ -97,7 +97,7 @@ def main(argv):
 	try: 
 	 exported_file in locals()
 	except:
-		exported_file = CONFIG.DEFAULT_EXPORT_PATH + 'blueweb-' + datetime.now().strftime("%y-%m-%d") +'.csv'
+		exported_file = CONFIG.DEFAULT_EXPORT_PATH + str.lower(scenario_name) + "-" + datetime.now().strftime("%y-%m-%d") +'.csv'
 	export_model.export(exported_file , data)
 	logging.info("CSV exported as " + exported_file)
 

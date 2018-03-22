@@ -98,6 +98,16 @@ ENV/
 # mypy
 .mypy_cache/
 
+##############
+Personal adding
+##############
 #log
-log/
+
 .log
+
+#import
+import_jsons/*.json
+
+#export
+export/*.csv
+.csv

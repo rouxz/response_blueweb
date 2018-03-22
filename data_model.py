@@ -1,6 +1,7 @@
 class ReportResponseTime():
-	def __init__(self):
+	def __init__(self, name):
 		self.responseTime = {}
+		self.name = name
 		
 	def add_measurement(self, step, duration):
 		""" Add a measurement of response time at step """

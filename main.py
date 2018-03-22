@@ -22,7 +22,9 @@ def usage():
 	print("-d, --debug set debug mode to ON")
 	print("-h, --help show this help")
 	print("-o FILE, --output FILE specify the file to be exported")
-	print("-p PATH, --parse_patch PATH parse the JSON included in the PATH folder")
+	print("-p PATH, --parse_path PATH parse the JSON included in the PATH folder")
+	print("-s FILE, --scenario FILE provide a JSON file explaining the different steps of the scenario to be parsed")
+	print("-n NAME, --name NAME provide a name to the scenarios we are parsing")
 
 
 def main(argv):
@@ -34,7 +36,7 @@ def main(argv):
 	# set all parameters according to command line
 	# --------------------------------------------
 	try:
-		opts, args = getopt.getopt(argv, "hp:do:", ["help", "parse_path=", "debug", "output"])
+		opts, args = getopt.getopt(argv, "hp:do:s:n:", ["help", "parse_path=", "debug", "output=", "scenario="])
 	except getopt.GetoptError as err:
 		print(err)
 		usage()
@@ -50,6 +52,8 @@ def main(argv):
 			imported_path = arg
 		elif opt in ("-o, --output"):
 			exported_file = arg
+		elif opt in ("-n", "--name"):
+			scenario_name = arg
 	
 
 	
@@ -76,7 +80,16 @@ def main(argv):
 		imported_path in locals()
 	except:	
 		imported_path = CONFIG.DEFAULT_IMPORT_FOLDER
-	data = parse_reports.parse(imported_path)
+	try:
+		scenario_json in locals()
+	except:
+		scenario_json = CONFIG.DEFAULT_SCENARIO_PATH + "blueweb_scenario.json"
+	try:
+		scenario_name in locals()
+	except:
+		scenario_name = "Blueweb"
+	scenario = {'name': scenario_name, 'imported_path': imported_path, 'scenario_path': scenario_json}
+	data = parse_reports.parse(scenario)
 	logging.info("parsing done")
 	
 	#export to CSV

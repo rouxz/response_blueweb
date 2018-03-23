@@ -23,8 +23,9 @@ def parse(scenario):
 	
 	logging.info(str(len(jsons)) + " files found ")
 	
-	#create the parser according to the scenario needed
-	parser = ParserScenario(8, scenario['scenario_path'])
+	#create the parser according to the scenario needed with a dictionary loaded from json
+	
+	parser = ParserScenario(scenario['number_of_steps'], scenario['matching_cases_dict'])
 	
 	for f in jsons:
 		logging.info("Starting to parse " + str(f))
@@ -50,13 +51,14 @@ def parse(scenario):
 
 class ParserScenario():
 	""" a parser will parse a JSON Qcumber file and group steps according to matching cases dictionary"""
-	def __init__(self, number_of_steps, matching_cases_file):
+	def __init__(self, number_of_steps, matching_cases_dict):
 		self.scenario = {}
 		for i in range(1, number_of_steps + 1):
 			self.scenario.update({"T" + str(i): -1})
 		pass
 	
-		self.matching_cases = json.load(open(matching_cases_file))
+		# self.matching_cases = json.load(open(matching_cases_dict))
+		self.matching_cases = matching_cases_dict
 	
 	def parse_file(self, file):
 		""" read data from within JSON file"""

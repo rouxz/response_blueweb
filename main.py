@@ -13,7 +13,7 @@ import sys
 from datetime import datetime
 import getopt
 import config as CONFIG
-
+import json
 import parse_reports
 import export_model
 
@@ -24,7 +24,7 @@ def usage():
 	print("-o FILE, --output FILE specify the file to be exported")
 	print("-p PATH, --parse_path PATH parse the JSON included in the PATH folder")
 	print("-s FILE, --scenario FILE provide a JSON file explaining the different steps of the scenario to be parsed")
-	print("-n NAME, --name NAME provide a name to the scenarios we are parsing")
+
 
 
 def main(argv):
@@ -52,8 +52,8 @@ def main(argv):
 			imported_path = arg
 		elif opt in ("-o, --output"):
 			exported_file = arg
-		elif opt in ("-n", "--name"):
-			scenario_name = arg
+		elif opt in ("-s","--scenario"):
+			scenario_json_path = arg
 	
 
 	
@@ -73,22 +73,34 @@ def main(argv):
 	print("")
 	
 	
-	#read data from json
-	#-------------------
-	logging.info("parsing started")
+	
 	try:
 		imported_path in locals()
 	except:	
 		imported_path = CONFIG.DEFAULT_IMPORT_FOLDER
 	try:
-		scenario_json in locals()
+		scenario_json_path in locals()
 	except:
-		scenario_json = CONFIG.DEFAULT_SCENARIO_PATH + "blueweb_scenario.json"
-	try:
-		scenario_name in locals()
+		scenario_json_path = CONFIG.DEFAULT_SCENARIO_PATH + "blueweb_scenario.json"
+		
+		
+	# retrieve data from json
+	try :
+		scenario_json = json.load(open(scenario_json_path))
+		
 	except:
-		scenario_name = "Blueweb"
-	scenario = {'name': scenario_name, 'imported_path': imported_path, 'scenario_path': scenario_json}
+	#close program if we cannot load the scenario
+		logging.info("Scenario file couldn't be loaded at :", scenario_json_path)
+		print("Scenario file couldn't be loaded at :", scenario_json_path)
+		return 2
+	
+	# info regarding our scenario
+	scenario = {'name': scenario_json['name'], 'imported_path': imported_path, 'number_of_steps': scenario_json['number_of_steps'], 'matching_cases_dict': scenario_json['grouping'], 'export_name' : str.lower(scenario_json['export_name']) + "-" + datetime.now().strftime("%y-%m-%d") }
+	
+	
+	#read data from json
+	#-------------------
+	logging.info("parsing started")
 	data = parse_reports.parse(scenario)
 	logging.info("parsing done")
 	
@@ -97,9 +109,17 @@ def main(argv):
 	try: 
 	 exported_file in locals()
 	except:
-		exported_file = CONFIG.DEFAULT_EXPORT_PATH + str.lower(scenario_name) + "-" + datetime.now().strftime("%y-%m-%d") +'.csv'
-	export_model.export(exported_file , data)
-	logging.info("CSV exported as " + exported_file)
+		exported_file = CONFIG.DEFAULT_EXPORT_PATH + scenario['export_name'] + "-" + datetime.now().strftime("%y-%m-%d") +'.csv'
+		
+	try:
+		export_model.export(exported_file , data)
+		logging.info("CSV exported as " + exported_file)
+	except:
+		logging.info("Scenario couldn't be stored at :", exported_file)
+		print("Scenario couldn't be stored at :", exported_file)
+		return 3
+		
+	return 0
 
 
 if __name__ == "__main__":

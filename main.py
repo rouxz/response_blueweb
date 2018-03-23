@@ -73,7 +73,8 @@ def main(argv):
 	print("")
 	
 	
-	
+	# importing all necessary data
+	# ----------------------------
 	try:
 		imported_path in locals()
 	except:	
@@ -81,13 +82,12 @@ def main(argv):
 	try:
 		scenario_json_path in locals()
 	except:
-		scenario_json_path = CONFIG.DEFAULT_SCENARIO_PATH + "blueweb_scenario.json"
+		scenario_json_path = CONFIG.DEFAULT_SCENARIO_PATH + CONFIG.DEFAULT_SCENARIO_NAME
 		
 		
-	# retrieve data from json
+	# retrieve scenario data from json
 	try :
 		scenario_json = json.load(open(scenario_json_path))
-		
 	except:
 	#close program if we cannot load the scenario
 		logging.info("Scenario file couldn't be loaded at :", scenario_json_path)
@@ -98,7 +98,7 @@ def main(argv):
 	scenario = {'name': scenario_json['name'], 'imported_path': imported_path, 'number_of_steps': scenario_json['number_of_steps'], 'matching_cases_dict': scenario_json['grouping'], 'export_name' : str.lower(scenario_json['export_name']) + "-" + datetime.now().strftime("%y-%m-%d") }
 	
 	
-	#read data from json
+	#parse data from json
 	#-------------------
 	logging.info("parsing started")
 	data = parse_reports.parse(scenario)

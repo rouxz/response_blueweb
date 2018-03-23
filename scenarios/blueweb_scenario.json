@@ -20,7 +20,7 @@
     	"greece: I fill \"abc@gmail.com\" in \"confirmEmailAddressField\"39":"OTHS",
     	"greece: I click on \"confirmButtonContactDetail\"40":"T7",
     	"greece: I click on \"continueButton\"43":"T8",
-    	"greece: I see \"creditCards\"44":"OTHS",
+    	"greece: I see \"creditCards\"44":"T8",
     	"greece: I select \"creditCards\"45":"OTHS",
     	"greece: I select \"masterCard\"46":"OTHS",
     	"greece: I click on \"noticeAndFareConditions\"47":"OTHS",

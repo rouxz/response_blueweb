@@ -27,17 +27,24 @@ def parse(scenario):
 	
 	parser = ParserScenario(scenario['number_of_steps'], scenario['matching_cases_dict'])
 	
+	#parse each file of the input and add the result (a dict of step and duration ) the list scenarios
 	for f in jsons:
+		if CONFIG.DEBUG:
+			print("Starting to parse " + str(f))
 		logging.info("Starting to parse " + str(f))
 		scenarios.append(parser.parse_file(f))
 		logging.info("Parsing of " + str(f) + " done")
+		if CONFIG.DEBUG:
+			print("Parsing of " + str(f) + " done")
 
 	
 	
 	# put the parsed scenarios into the datamodel
 	for s in scenarios:
 		for i, v in s.items():
-			data.add_measurement(i, v)
+			if (v >= -1):
+				# No error 
+				data.add_measurement(i, v)
 			
 
 	#print final result
@@ -52,33 +59,52 @@ def parse(scenario):
 class ParserScenario():
 	""" a parser will parse a JSON Qcumber file and group steps according to matching cases dictionary"""
 	def __init__(self, number_of_steps, matching_cases_dict):
-		self.scenario = {}
+		self.durations_of_steps = {}
 		for i in range(1, number_of_steps + 1):
-			self.scenario.update({"T" + str(i): -1})
+			self.durations_of_steps.update({"T" + str(i): -1})
 		pass
 	
 		# self.matching_cases = json.load(open(matching_cases_dict))
 		self.matching_cases = matching_cases_dict
+		
 	
 	def parse_file(self, file):
 		""" read data from within JSON file"""
 		data = json.load(open(file))
 	
 		#reinitiate scenario dict to -1
-		for k in self.scenario:
-			self.scenario[k] = -1
+		for k in self.durations_of_steps:
+			self.durations_of_steps[k] = -1
 	
 
 		# We loop on the main data structre
 		for el in data[0]['elements']:
 			for step in el['steps']:
 				#check if elements is identified and corresponding a case we want to track
-				if 'name' in step and (step['name']+str(step['line'])) in self.matching_cases:
-					actual_step = self.matching_cases[step['name']+str(step['line'])]
-					if actual_step in self.scenario:
-						if (self.scenario[actual_step] == -1):
-							self.scenario[actual_step] = step['result']['duration']
+				try:
+					# do we have line info in the json element ?
+					if 'line' in step:
+						# Does this line correspond to something we want to track ?
+						key = str(step['line'])
+						if key in self.matching_cases:
+							# found the step we are looking at
+							actual_step = self.matching_cases[key]
+							if actual_step in self.durations_of_steps:
+								if step['result']['status'] == "passed":
+									if CONFIG.DEBUG:
+										print(actual_step + ": " + str(step['result']['duration']))
+									if (self.durations_of_steps[actual_step] == -1):
+										self.durations_of_steps[actual_step] = step['result']['duration']
+									elif self.durations_of_steps[actual_step] == -2:
+										pass
+									else:
+										self.durations_of_steps[actual_step] += step['result']['duration']
+								else:
+									# One step has failed or skipped cannot do the data processing
+									self.durations_of_steps[actual_step] == -2
 						else:
-							self.scenario[actual_step] += step['result']['duration']
-				
-		return self.scenario
+							if CONFIG.DEBUG:
+								print("Line NOT to be tracked " + str(step["line"]))
+				except Exception as e:
+					print("Erreur " + str(e))
+		return self.durations_of_steps

@@ -29,8 +29,7 @@ def usage():
 
 def main(argv):
 	
-	global _debug 
-	_debug = False
+	
 	
 	
 	# set all parameters according to command line
@@ -46,7 +45,7 @@ def main(argv):
 			usage()
 			sys.exit()
 		elif opt in ('-d', 'debug'):
-			_debug = True
+			CONFIG.DEBUG = True
 			print("Debug mode ON")
 		elif opt in ("-p", "--parse_path"):
 			imported_path = arg
@@ -59,7 +58,7 @@ def main(argv):
 	
 	#Logging setup
 	#-------------
-	if _debug :
+	if CONFIG.DEBUG :
 		level = logging.DEBUG
 	else:
 		level = logging.INFO
@@ -109,7 +108,7 @@ def main(argv):
 	try: 
 	 exported_file in locals()
 	except:
-		exported_file = CONFIG.DEFAULT_EXPORT_PATH + scenario['export_name'] + "-" + datetime.now().strftime("%y-%m-%d") +'.csv'
+		exported_file = CONFIG.DEFAULT_EXPORT_PATH + scenario['export_name'] +'.csv'
 		
 	try:
 		export_model.export(exported_file , data)

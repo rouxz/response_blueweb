@@ -3,8 +3,8 @@
     "export_name" : "blueweb-kl",
     "number_of_steps": 8,
     "grouping":{
-    	"22" : "T1",
     	"23" : "T1",
+    	"24" : "T1",
     	"24":"T2",
     	"25": "T3",
     	"26" : "T3",

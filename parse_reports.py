@@ -94,17 +94,19 @@ class ParserScenario():
 									if CONFIG.DEBUG:
 										print(actual_step + ": " + str(step['result']['duration']))
 									if (self.durations_of_steps[actual_step] == -1):
+										 # step not already logged
 										self.durations_of_steps[actual_step] = step['result']['duration']
 									elif self.durations_of_steps[actual_step] == -2:
+										# there has been an issue on this step
 										pass
 									else:
+										# add this substep to the actual step
 										self.durations_of_steps[actual_step] += step['result']['duration']
 								else:
 									# One step has failed or skipped cannot do the data processing
 									self.durations_of_steps[actual_step] == -2
 						else:
-							if CONFIG.DEBUG:
-								print("Line NOT to be tracked " + str(step["line"]))
+							pass
 				except Exception as e:
 					print("Erreur " + str(e))
 		return self.durations_of_steps

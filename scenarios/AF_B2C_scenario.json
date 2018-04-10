@@ -1,0 +1,32 @@
+{
+    "name": "AF B2C",
+    "export_name" : "af-b2c",
+    "number_of_steps": 8,
+    "grouping":{
+    	"20" : "T1",
+    	"21" : "T1",
+    	"24":"T2",
+    	"25": "T2",
+    	"26" : "T2",
+    	"27": "OTHS",
+		"28" : "OTHS",
+		"29" : "OTHS",
+    	"31":"OTHS",
+    	"32":"OTHS",
+    	"33":"OTHS",
+    	"34":"OTHS",
+    	"35":"OTHS",
+    	"36":"OTHS",
+    	"37":"OTHS",
+    	"38":"OTHS",
+    	"39":"OTHS",
+    	"40":"OTHS",
+    	"43":"OTHS",
+    	"44":"OTHS",
+    	"45":"OTHS",
+    	"46":"OTHS",
+    	"47":"OTHS",
+    	"48":"OTHS",
+    	"49":"OTHS"
+    }
+}
